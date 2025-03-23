@@ -1,3 +1,4 @@
+# Pandas helps with data analysis
 import pandas as pd
 from sqlalchemy import create_engine
 
@@ -8,7 +9,7 @@ file_path = 'players.txt'
 # Assuming the file is tab-separated and has no header
 df = pd.read_csv(file_path, sep=',', header=None, names=['Team', 'Player', 'Price', 'Is_International', 'Role'])
 
-# Display the DataFrame to verify
+# Display the DaRtaFrame to verify
 print(df.head())
 
 # Database connection details

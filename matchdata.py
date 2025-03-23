@@ -14,12 +14,47 @@ from fuzzywuzzy import fuzz, process
 from bs4 import BeautifulSoup
 import re
 
+#drop table:
+from sqlalchemy import create_engine, MetaData, Table
+
+
 pd.set_option('display.max_columns', None)
 pd.set_option('display.max_rows', None)
 
 
 engine = create_engine("postgresql://postgres:postgres@localhost:5432/ipl25")
 
+#code to drop the table first and then add them again
+# Table to drop
+TABLE_batting = "masterbattingdf"
+TABLE_bowling = "masterbowlingdf"
+
+# Create metadata object
+metadata = MetaData()
+
+#batting
+try:
+    # Reflect the table from the database
+    table = Table(TABLE_batting, metadata, autoload_with=engine)
+
+    # Drop the table
+    table.drop(engine, checkfirst=True)  # checkfirst=True ensures it doesn't fail if the table doesn't exist
+    print(f"Table '{TABLE_batting}' dropped successfully!")
+
+except Exception as e:
+    print(f"Error: {e}")
+
+#Bowling
+try:
+    # Reflect the table from the database
+    table = Table(TABLE_bowling, metadata, autoload_with=engine)
+
+    # Drop the table
+    table.drop(engine, checkfirst=True)  # checkfirst=True ensures it doesn't fail if the table doesn't exist
+    print(f"Table '{TABLE_bowling}' dropped successfully!")
+
+except Exception as e:
+    print(f"Error: {e}")
 
 options = webdriver.ChromeOptions()
 browser = webdriver.Chrome(options=options)
@@ -59,7 +94,7 @@ for link in links:
     href = link.get('href')
     if href != "/series/ipl-2025-1449924":
         matchlinks.append(href)
-
+scorecard_links = [link for link in matchlinks if link.endswith('full-scorecard')]
 start_match_number = 1
 end_match_number = 3
 
@@ -67,8 +102,8 @@ masterbattingdf = pd.DataFrame()
 masterbowlingdf = pd.DataFrame()
 
 for match in range(start_match_number-1, end_match_number):
-    time.sleep(5)
-    browser.get("https://www.espncricinfo.com" + matchlinks[match])
+    browser.get("https://www.espncricinfo.com" + scorecard_links[match])
+# removing delay - time.sleep(5)
     html = browser.page_source
     soup = BeautifulSoup(html, 'html.parser')
 
@@ -86,10 +121,9 @@ for match in range(start_match_number-1, end_match_number):
 
     df = pd.DataFrame(data)
     df = df.dropna()
-
     columns = ["player", "wkt", "runs", "balls", "mins", "fours", "sixes", "strikerate"]
+#   print(df.head())
     df.columns = columns
-
     df.player = df.player.str.replace(r' (c)', '')
     df.player = df.player.str.replace(r'†', '')
     df['player'] = df['player'].str.strip()
