@@ -1,0 +1,28 @@
+LSG, Nicholas Pooran, 10, Yes  
+LSG, Rishabh Pant, 10.5, No  
+GT, Jos Buttler, 10, Yes  
+DC, KL Rahul, 10, No  
+RR, Sanju Samson, 10, No  
+RCB, Phil Salt, 10, Yes  
+SRH, Heinrich Klaasen, 9.5, Yes  
+DC, Tristan Stubbs, 9, Yes  
+SRH, Ishan Kishan, 9, No  
+DC, Abishek Porel, 8.5, No  
+RR, Dhruv Jurel, 8.5, No  
+PBKS, Prabhsimran Singh, 8.5, No  
+CSK, Devon Conway, 8.5, Yes  
+MI, Ryan Rickelton, 8.5, Yes  
+CSK, MS Dhoni, 8.5, No  
+RCB, Jitesh Sharma, 8.5, No  
+KKR, Quinton de Kock, 8.5, Yes  
+PBKS, Josh Inglis, 8, Yes  
+KKR, Rahmanullah Gurbaz, 8, Yes  
+PBKS, Vishnu Vinod, 7.5, No  
+MI, Krishnan Shrijith, 7, No  
+LSG, Aryan Juyal, 7, No  
+CSK, Vansh Bedi, 7, No  
+GT, Kumar Kushagra, 7, No  
+RR, Kunal Singh Rathore, 7, No  
+KKR, Luvnith Sisodia, 7, No  
+MI, Robin Minz, 7, No  
+GT, Anuj Rawat, 7, No 
