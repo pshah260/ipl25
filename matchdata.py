@@ -1,6 +1,6 @@
 
 import time
-
+# Opens the Chrome browser
 from selenium import webdriver
 import json
 import pandas as pd
@@ -18,7 +18,7 @@ pd.set_option('display.max_columns', None)
 pd.set_option('display.max_rows', None)
 
 
-engine = create_engine("postgresql://postgres:postgres@localhost:5432/iplt25")
+engine = create_engine("postgresql://postgres:postgres@localhost:5432/ipl25")
 
 
 options = webdriver.ChromeOptions()
@@ -26,7 +26,6 @@ browser = webdriver.Chrome(options=options)
 
 wait = WebDriverWait(browser, 30)
 
-start_game = 1354
 browser.get("https://www.espncricinfo.com/series/ipl-2025-1449924/match-schedule-fixtures-and-results")
 
 html = browser.page_source
@@ -62,7 +61,7 @@ for link in links:
         matchlinks.append(href)
 
 start_match_number = 1
-end_match_number = 2
+end_match_number = 3
 
 masterbattingdf = pd.DataFrame()
 masterbowlingdf = pd.DataFrame()
@@ -72,7 +71,7 @@ for match in range(start_match_number-1, end_match_number):
     html = browser.page_source
     soup = BeautifulSoup(html, 'html.parser')
 
-    tables = soup.findAll("table")
+    tables = soup.find_all("table")
     t = tables[0]
 
     data = []
@@ -87,15 +86,14 @@ for match in range(start_match_number-1, end_match_number):
     df = pd.DataFrame(data)
     df = df.dropna()
 
-    columns = ["player", "wkt", "runs", "balls", "fours", "sixes", "strikerate"]
+    columns = ["player", "wkt", "runs", "balls", "mins", "fours", "sixes", "strikerate"]
     df.columns = columns
 
-    df.player = df.player.str.replace(r'\(c\)', '')
-    df.player = df.player.str.replace(r'\u2020', '')
+    df.player = df.player.str.replace(r' (c)', '')
+    df.player = df.player.str.replace(r'†', '')
     df['player'] = df['player'].str.strip()
-    df.wkt = df.wkt.str.replace(r'\u2020', '')
-    df.wkt = df.wkt.str.replace(r'\(', '')
-    df.wkt = df.wkt.str.replace(r'\)', '')
+    df.wkt = df.wkt.str.replace(r'†', '')
+    df.wkt = df.wkt.str.replace(r' (c)', '')
     df["innings"] = 1
     df = df.reset_index(drop=True)
     df['battingorder'] = df.index + 1
@@ -118,15 +116,15 @@ for match in range(start_match_number-1, end_match_number):
     df = pd.DataFrame(data)
     df = df.dropna()
 
-    columns = ["player", "wkt", "runs", "balls", "minutes", "fours", "sixes", "strikerate"]
+    columns = ["player", "wkt", "runs", "balls", "mins", "fours", "sixes", "strikerate"]
     df.columns = columns
 
-    df.player = df.player.str.replace(r'\(c\)', '')
-    df.player = df.player.str.replace(r'\u2020', '')
+    df.player = df.player.str.replace(r' (c)', '')
+    df.player = df.player.str.replace(r'†', '')
     df['player'] = df['player'].str.strip()
-    df.wkt = df.wkt.str.replace(r'\u2020', '')
-    df.wkt = df.wkt.str.replace(r'\(', '')
-    df.wkt = df.wkt.str.replace(r'\)', '')
+    df.wkt = df.wkt.str.replace(r'†', '')
+    df.wkt = df.wkt.str.replace(r' (c)', '')
+
     df["innings"] = 2
     df = df.reset_index(drop=True)
     df['battingorder'] = df.index + 1
@@ -153,8 +151,8 @@ for match in range(start_match_number-1, end_match_number):
     columns = ["player", "overs", "maiden", "runs", "wickets", "economy", "dots", "fours", "sixes", "wides", "noball"]
     df.columns = columns
 
-    df.player = df.player.str.replace(r'\(c\)', '')
-    df.player = df.player.str.replace(r'\u2020', '')
+    df.player = df.player.str.replace(r' (c)', '')
+    df.player = df.player.str.replace(r'†', '')
     df['player'] = df['player'].str.strip()
     df["innings"] = 1
     df = df.reset_index(drop=True)
@@ -180,8 +178,8 @@ for match in range(start_match_number-1, end_match_number):
     columns = ["player", "overs", "maiden", "runs", "wickets", "economy", "dots", "fours", "sixes", "wides", "noball"]
     df.columns = columns
 
-    df.player = df.player.str.replace(r'\(c\)', '')
-    df.player = df.player.str.replace(r'\u2020', '')
+    df.player = df.player.str.replace(r' (c)', '')
+    df.player = df.player.str.replace(r'†', '')
     df['player'] = df['player'].str.strip()
 
     df["innings"] = 2
