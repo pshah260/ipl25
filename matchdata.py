@@ -67,6 +67,7 @@ masterbattingdf = pd.DataFrame()
 masterbowlingdf = pd.DataFrame()
 
 for match in range(start_match_number-1, end_match_number):
+    time.sleep(5)
     browser.get("https://www.espncricinfo.com" + matchlinks[match])
     html = browser.page_source
     soup = BeautifulSoup(html, 'html.parser')
