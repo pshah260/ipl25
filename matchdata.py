@@ -120,6 +120,11 @@ for match in range(start_match_number-1, end_match_number):
 
 
     df = pd.DataFrame(data)
+    filtered_df = df[df[0].str.contains('Total', na=False)]
+    srmatch = re.search(r'RR:\s*([\d.]+)', filtered_df.iloc[0][1])
+    sr_value = float(srmatch.group(1))
+
+
     df = df.dropna()
     columns = ["player", "wkt", "runs", "balls", "mins", "fours", "sixes", "strikerate"]
 #   print(df.head())
@@ -133,6 +138,7 @@ for match in range(start_match_number-1, end_match_number):
     df = df.reset_index(drop=True)
     df['battingorder'] = df.index + 1
     df["bowler"] = df.apply(g, axis=1)
+    df['TeamSR'] = sr_value
     battinginfo_1 = df
 
     #batting second inning
@@ -149,6 +155,9 @@ for match in range(start_match_number-1, end_match_number):
 
 
     df = pd.DataFrame(data)
+    filtered_df = df[df[0].str.contains('Total', na=False)]
+    srmatch = re.search(r'RR:\s*([\d.]+)', filtered_df.iloc[0][1])
+    sr_value = float(srmatch.group(1))
     df = df.dropna()
 
     columns = ["player", "wkt", "runs", "balls", "mins", "fours", "sixes", "strikerate"]
@@ -164,6 +173,7 @@ for match in range(start_match_number-1, end_match_number):
     df = df.reset_index(drop=True)
     df['battingorder'] = df.index + 1
     df["bowler"] = df.apply(g, axis=1)
+    df['TeamSR'] = sr_value
     battinginfo_2 = df
 
 
@@ -229,21 +239,32 @@ for match in range(start_match_number-1, end_match_number):
 
     battinginfo_1["totalruns"] = battinginfo_1["runs"].sum()
     battinginfo_1["totalwkts"] = bowlingdf_1["wickets"].sum()
+    battinginfo_1["Oppteamruns"] = battinginfo_2["runs"].sum()
+    battinginfo_1["Oppteamwkts"] = bowlingdf_2["wickets"].sum()
+
     battinginfo_2["totalruns"] = battinginfo_2["runs"].sum()
     battinginfo_2["totalwkts"] = bowlingdf_2["wickets"].sum()
+    battinginfo_2["Oppteamruns"] = battinginfo_1["runs"].sum()
+    battinginfo_2["Oppteamwkts"] = bowlingdf_1["wickets"].sum()
 
     bowlingdf_1["totalruns"] = battinginfo_1["runs"].sum()
     bowlingdf_1["totalwkts"] = bowlingdf_1["wickets"].sum()
+    bowlingdf_1["Oppteamruns"] = battinginfo_2["runs"].sum()
+    bowlingdf_1["Oppteamwkts"] = bowlingdf_2["wickets"].sum()
+
     bowlingdf_2["totalruns"] = battinginfo_2["runs"].sum()
     bowlingdf_2["totalwkts"] = bowlingdf_2["wickets"].sum()
+    bowlingdf_2["Oppteamruns"] = battinginfo_1["runs"].sum()
+    bowlingdf_2["Oppteamwkts"] = bowlingdf_1["wickets"].sum()
 
-    battinginfo_1['Matched_Name'] = battinginfo_1['player'].apply(lambda x: find_best_match(x, bowlingdf_1['player']))
-    batting_merge_df_1 = battinginfo_1.merge(bowlingdf_1, how='left', left_on='Matched_Name', right_on='player')
+#    battinginfo_1['Matched_Name'] = battinginfo_1['player'].apply(lambda x: find_best_match(x, bowlingdf_1['player']))
+#    batting_merge_df_1 = battinginfo_1.merge(bowlingdf_1, how='left', left_on='Matched_Name', right_on='player')
 
-    battinginfo_2['Matched_Name'] = battinginfo_2['player'].apply(lambda x: find_best_match(x, bowlingdf_2['player']))
-    batting_merge_df_2 = battinginfo_2.merge(bowlingdf_2, how='left', left_on='Matched_Name', right_on='player')
+#    battinginfo_2['Matched_Name'] = battinginfo_2['player'].apply(lambda x: find_best_match(x, bowlingdf_2['player']))
+#    batting_merge_df_2 = battinginfo_2.merge(bowlingdf_2, how='left', left_on='Matched_Name', right_on='player')
 
-    battingdf = pd.concat([batting_merge_df_1, batting_merge_df_2], ignore_index=True)
+#    battingdf = pd.concat([batting_merge_df_1, batting_merge_df_2], ignore_index=True)
+    battingdf = pd.concat([battinginfo_1, battinginfo_2], ignore_index=True)
     battingdf["matchnumber"] = match + 1
     bowlingdf = pd.concat([bowlingdf_1, bowlingdf_2], ignore_index=True)
     bowlingdf["matchnumber"] = match + 1
@@ -251,9 +272,11 @@ for match in range(start_match_number-1, end_match_number):
 
 
     masterbattingdf = pd.concat([masterbattingdf, battingdf], ignore_index=True)
-    masterbattingdf.drop(["overs", "maiden", "wickets", "economy", "dots", "fours_y", "sixes_y", "wides", "noball", "innings_y", "Matched_Name", "runs_y", "player_y"], axis=1, inplace=True)
+
+#    masterbattingdf.drop(["overs", "maiden", "wickets", "economy", "dots", "fours_y", "sixes_y", "wides", "noball", "innings_y", "Matched_Name", "runs_y", "player_y"], axis=1, inplace=True)
     masterbowlingdf = pd.concat([masterbowlingdf, bowlingdf], ignore_index=True)
 
-masterbattingdf = masterbattingdf.rename(columns={"player_x": "player"})
+#masterbattingdf = masterbattingdf.rename(columns={"player_x": "player"})
+
 masterbattingdf.to_sql("masterbattingdf", engine)
 masterbowlingdf.to_sql("masterbowlingdf", engine)
